@@ -105,18 +105,8 @@ async function transcribeFile(file) {
     throw new Error('API key is missing.');
   }
 
-  const MAX_CHUNK_SIZE = 10 * 1024 * 1024; // 10MB
-
-  if (file.size <= MAX_CHUNK_SIZE) {
-    // Small file, transcribe directly
-    return await transcribeChunk(file, apiKey, 0, 1);
-  } else {
-    // Large file, split into chunks
-    showStatus('File is large, splitting into chunks...');
-    // Placeholder: integrate ffmpeg.wasm here to split audio into ~10MB chunks
-    // For now, throw an error to indicate this is not yet implemented
-    throw new Error('Large file splitting not yet implemented. Please upload files smaller than 10MB for now.');
-  }
+  // ElevenLabs supports files up to 1GB, so upload directly
+  return await transcribeChunk(file, apiKey, 0, 1);
 }
 
 async function transcribeChunk(blob, apiKey, chunkIndex, totalChunks) {
@@ -125,21 +115,22 @@ async function transcribeChunk(blob, apiKey, chunkIndex, totalChunks) {
 
   const formData = new FormData();
   formData.append('file', blob, `chunk_${chunkIndex}.mp3`);
-  formData.append('model', 'whisper-1');
+  formData.append('model_id', 'eleven_multilingual_v2'); // default model
   formData.append('language', 'en');
 
   try {
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const response = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`
+        'xi-api-key': apiKey
+        // Note: Do NOT set Content-Type here; fetch will set it with boundary
       },
       body: formData
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMsg = errorData.error?.message || response.statusText;
+      const errorMsg = errorData.error || response.statusText;
       throw new Error(`API error: ${errorMsg}`);
     }
 
