@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Whisper Transcriber Web</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+  <h1>Whisper Transcriber</h1>
+
+  <section class="api-key-section">
+    <label for="api-key">OpenAI API Key:</label>
+    <input type="password" id="api-key" placeholder="Enter your OpenAI API key" />
+    <button id="save-api-key">Save API Key</button>
+    <p class="note">Your API key is stored locally in your browser.</p>
+  </section>
+
+  <section class="upload-section">
+    <div id="drop-area">
+      <p>Drag & drop an audio file here, or click to select</p>
+      <input type="file" id="file-input" accept="audio/*" hidden />
+    </div>
+    <p id="file-info">No file selected</p>
+  </section>
+
+  <section class="controls">
+    <button id="start-transcription" disabled>Start Transcription</button>
+  </section>
+
+  <section class="progress-section">
+    <label for="progress-bar">Progress:</label>
+    <progress id="progress-bar" value="0" max="100"></progress>
+    <p id="status-message"></p>
+  </section>
+
+  <section class="output-section">
+    <h2>Transcription Output</h2>
+    <textarea id="transcription-output" rows="10" readonly></textarea>
+    <button id="copy-output" disabled>Copy to Clipboard</button>
+  </section>
+
+  <section class="error-section">
+    <p id="error-message"></p>
+  </section>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
